@@ -538,11 +538,14 @@ func (scope *Scope) createTable() *Scope {
 		scope.createJoinTable(field)
 	}
 
-	var primaryKeyStr string
 	if len(primaryKeys) > 0 && !primaryKeyInColumnType {
-		primaryKeyStr = fmt.Sprintf(", PRIMARY KEY (%v)", strings.Join(primaryKeys, ","))
+		tags = append(tags, fmt.Sprintf("PRIMARY KEY (%v)", strings.Join(primaryKeys, ",")))
 	}
-	scope.Raw(fmt.Sprintf("CREATE TABLE %v (%v %v) %s", scope.QuotedTableName(), strings.Join(tags, ","), primaryKeyStr, scope.getTableOptions())).Exec()
+	scope.Raw(fmt.Sprintf("CREATE TABLE %v (%v) %s",
+		scope.QuotedTableName(),
+		strings.Join(tags, ","),
+		scope.getTableOptions()),
+	).Exec()
 	return scope
 }
 

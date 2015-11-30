@@ -453,16 +453,18 @@ func (scope *Scope) generateSqlTag(field *StructField) string {
 	}
 }
 
+// Parse a value from a struct field tag (i.e., the result of
+// `(reflect.StructField).Tag.Get("FOO")`)
 func parseTagSetting(str string) map[string]string {
 	tags := strings.Split(str, ";")
 	setting := map[string]string{}
 	for _, value := range tags {
-		v := strings.Split(value, ":")
+		v := strings.SplitN(value, ":", 2)
 		k := strings.TrimSpace(strings.ToUpper(v[0]))
-		if len(v) >= 2 {
-			setting[k] = strings.Join(v[1:], ":")
-		} else {
+		if len(v) == 1 {
 			setting[k] = k
+		} else {
+			setting[k] = v[1]
 		}
 	}
 	return setting
